@@ -5,12 +5,12 @@
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
     <Grid>
         <!-- Фон сцены -->
-        <Image Name="BackgroundImage" Stretch="Fill"/>
+        <Image Name="BackgroundImage" Stretch="Fill" Panel.ZIndex="0"/>
 
         <!-- Контейнер для текста -->
-        <Border Background="#AA000000" Margin="10,491,10,0" Padding="10" VerticalAlignment="Top">
+        <Border Background="#AA000000" Margin="10,491,10,0" Padding="10" VerticalAlignment="Top" Panel.ZIndex="2">
             <StackPanel Height="63">
-                <TextBlock x:Name="DialogueText" FontSize="16" Foreground="White" TextWrapping="Wrap"/>
+                <TextBlock x:Name="DialogueText" FontSize="16" Foreground="White" TextWrapping="Wrap" Panel.ZIndex="2"/>
                 <TextBox x:Name="TextInput" Width="232" Text="Введите текст..." Foreground="Gray"
          GotFocus="TextInput_GotFocus" LostFocus="TextInput_LostFocus" RenderTransformOrigin="0.5,0.573" Height="29" TextChanged="TextInput_TextChanged"/>
 
@@ -18,7 +18,16 @@
         </Border>
 
         <!-- Изображение персонажа -->
-        <Image Name="CharacterImage" Width="218" Height="440" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+        <Image Name="CharacterImage" Width="246" Height="445" VerticalAlignment="Bottom" HorizontalAlignment="Left" Stretch="Fill" Panel.ZIndex="1"/>
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Right" Margin="10">
+            <TextBlock Text="Ширина персонажа" Margin="0,5"/>
+            <Slider Name="WidthSlider" Minimum="50" Maximum="500" Value="100" TickFrequency="10"
+        IsSnapToTickEnabled="True" ValueChanged="WidthSlider_ValueChanged"/>
+            <TextBlock Text="Высота персонажа" Margin="0,5"/>
+            <Slider Name="HeightSlider" Minimum="50" Maximum="500" Value="100" TickFrequency="10"
+        IsSnapToTickEnabled="True" ValueChanged="HeightSlider_ValueChanged"/>
+        </StackPanel>
+
 
         <!-- Кнопки управления -->
         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10">

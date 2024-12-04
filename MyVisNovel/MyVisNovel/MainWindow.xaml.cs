@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
+using System.Diagnostics;
 
 
 
@@ -161,5 +162,22 @@ namespace MyVisNovel
         {
 
         }
+        private void WidthSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (CharacterImage != null)
+            {
+                CharacterImage.Width = e.NewValue; // Устанавливаем новое значение ширины
+            }
+        }
+
+        private void HeightSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (CharacterImage != null)
+            {
+                CharacterImage.Height = e.NewValue; // Устанавливаем новое значение высоты
+            }
+        }
+
+
     }
 }
