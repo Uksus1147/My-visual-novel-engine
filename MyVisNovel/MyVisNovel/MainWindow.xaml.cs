@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using Microsoft.Win32;
 
 
 
@@ -85,10 +86,19 @@ namespace MyVisNovel
         }
         private void ChangeBackground_Click(object sender, RoutedEventArgs e)
         {
-            // Здесь должен быть код для изменения заднего фона
-            string newBackgroundPath = "Images/new_background.jpg"; // Путь к новому изображению
-            BackgroundImage.Source = new BitmapImage(new Uri(newBackgroundPath, UriKind.Relative));
-            currentScene.BackgroundImagePath = newBackgroundPath; // Обновляем путь в сцене
+            // Открываем диалог для выбора изображения
+            var openFileDialog = new OpenFileDialog
+            {
+                Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp", // Разрешенные форматы
+                Title = "Выберите изображение для фона"
+            };
+
+            // Если пользователь выбрал файл, обновляем фон
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string selectedImagePath = openFileDialog.FileName; // Путь к выбранному изображению
+                BackgroundImage.Source = new BitmapImage(new Uri(selectedImagePath, UriKind.Absolute)); // Обновляем фон
+            }
         }
 
         private void ChangeText_Click(object sender, RoutedEventArgs e)
