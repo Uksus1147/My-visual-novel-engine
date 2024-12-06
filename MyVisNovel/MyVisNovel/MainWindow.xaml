@@ -26,6 +26,8 @@
             <TextBlock Text="Высота персонажа" Margin="0,5"/>
             <Slider Name="HeightSlider" Minimum="50" Maximum="500" Value="100" TickFrequency="10"
         IsSnapToTickEnabled="True" ValueChanged="HeightSlider_ValueChanged"/>
+            <TextBlock Text="Громкость музыки" Margin="0,5"/>
+            <Slider Minimum="0" Maximum="1" Value="0.5" Width="150" ValueChanged="VolumeSlider_ValueChanged"/>
         </StackPanel>
 
 
@@ -35,6 +37,7 @@
             <Button Content="Изменить текст" Click="ChangeText_Click"/>
             <Button Content="Добавить персонажа" Click="ChangeCharacter_Click"/>
             <Button Content="Сохранить сцену" Click="SaveScene_Click"/>
+            <Button Content="Добавить музыку"  Click="AddMusic_Click"/>
         </StackPanel>
     </Grid>
 </Window>

@@ -28,6 +28,7 @@ namespace MyVisNovel
     {
         private Scene currentScene;
         private int dialogueIndex = 0;
+        private MediaPlayer mediaPlayer = new MediaPlayer(); // Создаём плеер для музыки
 
         public MainWindow()
         {
@@ -158,6 +159,21 @@ namespace MyVisNovel
             }
         }
 
+        private void AddMusic_Click(object sender, RoutedEventArgs e)
+        {
+            // Открываем диалог выбора файла
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Filter = "Audio Files|*.mp3;*.wav|All Files|*.*"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string musicPath = openFileDialog.FileName; // Получаем путь к файлу
+                mediaPlayer.Open(new Uri(musicPath)); // Загружаем музыку
+                mediaPlayer.Play(); // Начинаем воспроизведение
+            }
+        }
         private void TextInput_TextChanged(object sender, TextChangedEventArgs e)
         {
 
