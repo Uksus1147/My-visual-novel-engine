@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.Runtime.Serialization.Formatters.Binary;
+
 
 
 
@@ -29,6 +31,12 @@ namespace MyVisNovel
         private Scene currentScene;
         private int dialogueIndex = 0;
         private MediaPlayer mediaPlayer = new MediaPlayer(); // Создаём плеер для музыки
+        public List<Scene> Scenes { get; set; } = new List<Scene>();
+        public string BGPath;
+        public string CharacterPath;
+        public string MusicPath;
+
+
 
         public MainWindow()
         {
@@ -99,6 +107,7 @@ namespace MyVisNovel
             if (openFileDialog.ShowDialog() == true)
             {
                 string selectedImagePath = openFileDialog.FileName; // Путь к выбранному изображению
+                BGPath = selectedImagePath;
                 BackgroundImage.Source = new BitmapImage(new Uri(selectedImagePath, UriKind.Absolute)); // Обновляем фон
             }
         }
@@ -128,19 +137,13 @@ namespace MyVisNovel
             if (openFileDialog.ShowDialog() == true)
             {
                 string newCharacterPath = openFileDialog.FileName; // Получаем путь к выбранному изображению
+                CharacterPath = newCharacterPath;
                 CharacterImage.Source = new BitmapImage(new Uri(newCharacterPath)); // Отображаем новое изображение
                                                                                     // Здесь также можешь обновить объект Scene, чтобы сохранить этот путь
             }
         }
 
 
-        private void SaveScene_Click(object sender, RoutedEventArgs e)
-        {
-            // Сохранение текущей сцены в файл
-            string filePath = "Scenes/scene1.json"; // Путь к файлу сцены
-            File.WriteAllText(filePath, JsonConvert.SerializeObject(currentScene, Formatting.Indented));
-            MessageBox.Show("Сцена сохранена!");
-        }
         private void TextInput_GotFocus(object sender, RoutedEventArgs e)
         {
             if (TextInput.Text == "Введите текст...")
@@ -169,6 +172,7 @@ namespace MyVisNovel
             if (openFileDialog.ShowDialog() == true)
             {
                 string musicPath = openFileDialog.FileName;
+                MusicPath = musicPath;
                 mediaPlayer.Open(new Uri(musicPath));
                 mediaPlayer.MediaEnded += MediaPlayer_MediaEnded; // Подписываемся на событие окончания воспроизведения
                 mediaPlayer.Play();
@@ -206,6 +210,108 @@ namespace MyVisNovel
             }
         }
 
+        // Обработчик для добавления новой сцены
+        private void AddSceneButton_Click(object sender, RoutedEventArgs e)
+        {
+            var newScene = new Scene
+            {
+                BackgroundImagePath = "default_background.jpg",  // Путь к фону
+                CharacterImagePath = "default_character.jpg",    // Путь к персонажу
+                MusicPath = "default_music.mp3",                  // Путь к музыке
+                Text = "Текст сцены"                               // Текст сцены
+            };
+
+            Scenes.Add(newScene);
+
+            // Обновляем ComboBox с новыми сценами
+            SceneComboBox.ItemsSource = null;
+            SceneComboBox.ItemsSource = Scenes;
+            SceneComboBox.SelectedIndex = Scenes.Count - 1; // Выбираем последнюю добавленную сцену
+        }
+
+        // Обработчик для удаления выбранной сцены
+        private void DeleteSceneButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedScene = SceneComboBox.SelectedItem as Scene;
+            if (selectedScene != null)
+            {
+                Scenes.Remove(selectedScene);
+
+                // Обновляем ComboBox с оставшимися сценами
+                SceneComboBox.ItemsSource = null;
+                SceneComboBox.ItemsSource = Scenes;
+                SceneComboBox.SelectedIndex = 0; // Выбираем первую сцену (или другую логику)
+            }
+        }
+
+        // Обработчик для сохранения сцены
+        private void SaveSceneButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedScene = SceneComboBox.SelectedItem as Scene;
+            if (selectedScene != null)
+            {
+                // Сохраняем текст сцены
+                selectedScene.Text = DialogueText.Text;
+
+                selectedScene.BackgroundImagePath = BGPath;
+                selectedScene.CharacterImagePath = CharacterPath;
+                selectedScene.MusicPath = MusicPath;
+
+                MessageBox.Show("Сцена сохранена!");
+            }
+        }
+        public Scene previousScene;
+        // Обработчик для выбора сцены из ComboBox
+        private void SceneComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectedScene = SceneComboBox.SelectedItem as Scene;
+            if (selectedScene != null)
+            {
+                // Отображаем данные сцены в интерфейсе
+                DialogueText.Text = selectedScene.Text;
+
+                // Загружаем фоновое изображение
+                if (File.Exists(selectedScene.BackgroundImagePath))
+                {
+                    BackgroundImage.Source = new BitmapImage(new Uri(selectedScene.BackgroundImagePath, UriKind.Absolute));
+                    Debug.WriteLine("Background: " + selectedScene.BackgroundImagePath);
+                }
+
+                // Загружаем изображение персонажа
+                if (File.Exists(selectedScene.CharacterImagePath))
+                {
+                    CharacterImage.Source = new BitmapImage(new Uri(selectedScene.CharacterImagePath, UriKind.Absolute));
+                }
+
+                // Логика для воспроизведения музыки
+                if (File.Exists(selectedScene.MusicPath))
+                {
+                    MediaPlayer mediaPlayer = new MediaPlayer();
+                    // Проверка музыки
+                    if (previousScene == null || selectedScene.MusicPath != previousScene.MusicPath)
+                    {
+                        if (!string.IsNullOrEmpty(selectedScene.MusicPath))
+                        {
+                            // Музыка отличается, переключаем трек
+                            mediaPlayer.Stop();
+                            mediaPlayer.Open(new Uri(selectedScene.MusicPath, UriKind.Absolute));
+                            mediaPlayer.Play();
+                        }
+                        else
+                        {
+                            // Если музыки в новой сцене нет, останавливаем воспроизведение
+                            mediaPlayer.Stop();
+                        }
+                    }
+                    // Обновляем ссылку на предыдущую сцену
+                    previousScene = selectedScene;
+
+                    mediaPlayer.Open(new Uri(selectedScene.MusicPath, UriKind.Absolute));
+                    mediaPlayer.Play();
+                }
+            }
+        }
 
     }
 }
+
