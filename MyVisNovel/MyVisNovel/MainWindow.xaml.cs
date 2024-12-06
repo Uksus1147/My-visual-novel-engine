@@ -161,7 +161,6 @@ namespace MyVisNovel
 
         private void AddMusic_Click(object sender, RoutedEventArgs e)
         {
-            // Открываем диалог выбора файла
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "Audio Files|*.mp3;*.wav|All Files|*.*"
@@ -169,11 +168,24 @@ namespace MyVisNovel
 
             if (openFileDialog.ShowDialog() == true)
             {
-                string musicPath = openFileDialog.FileName; // Получаем путь к файлу
-                mediaPlayer.Open(new Uri(musicPath)); // Загружаем музыку
-                mediaPlayer.Play(); // Начинаем воспроизведение
+                string musicPath = openFileDialog.FileName;
+                mediaPlayer.Open(new Uri(musicPath));
+                mediaPlayer.MediaEnded += MediaPlayer_MediaEnded; // Подписываемся на событие окончания воспроизведения
+                mediaPlayer.Play();
             }
         }
+
+        // Событие повторного воспроизведения
+        private void MediaPlayer_MediaEnded(object sender, EventArgs e)
+        {
+            mediaPlayer.Position = TimeSpan.Zero; // Сбрасываем позицию воспроизведения в начало
+            mediaPlayer.Play(); // Повторно запускаем музыку
+        }
+        private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            mediaPlayer.Volume = e.NewValue; // Изменяем громкость
+        }
+
         private void TextInput_TextChanged(object sender, TextChangedEventArgs e)
         {
 
