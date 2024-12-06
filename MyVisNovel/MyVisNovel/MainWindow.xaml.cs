@@ -21,6 +21,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 
 
+
+
 namespace MyVisNovel
 {
     /// <summary>
@@ -311,6 +313,9 @@ namespace MyVisNovel
                 }
             }
         }
+
+        
+
 
     }
 }

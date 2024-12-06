@@ -53,7 +53,6 @@
 
             <!-- Кнопка сохранения текущей сцены -->
             <Button Content="Сохранить сцену" Click="SaveSceneButton_Click"/>
-
         </StackPanel>
     </Grid>
 </Window>
